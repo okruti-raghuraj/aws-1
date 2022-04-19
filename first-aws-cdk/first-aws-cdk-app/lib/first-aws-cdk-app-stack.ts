@@ -24,11 +24,8 @@ export class FirstAwsCdkAppStack extends cdk.Stack {
     userResource.addMethod('GET' , new apigateway.LambdaIntegration(lambdaListUsers));
     userResource.addMethod('PUT');
     const tableUsers = new dynamodb.Table(this , 'Users' , {
-      partitionKey:[{ name: 'id', 
+      partitionKey:{ name: 'id', 
       type: dynamodb.AttributeType.STRING },
-      {
-
-      }]
     });
 
     tableUsers.grantReadData(lambdaListUsers);
