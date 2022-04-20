@@ -4,14 +4,21 @@ import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as dynamodb from '@aws-cdk/aws-dynamodb';
 import * as path from 'path';
-import { Table } from '@aws-cdk/aws-dynamodb';
+import * as cloudwatch from '@aws-cdk/aws-logs';
 
 export class FirstAwsCdkAppStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     // The code that defines your stack goes here
-    const apiGateway = new apigateway.RestApi(this , 'APIGW' , {});
+
+    const logsOFApiGateway = new cloudwatch.LogGroup(this , 'ApiGateway');
+    const apiGateway = new apigateway.RestApi(this , 'APIGW' , {
+      deployOptions: {
+         accessLogDestination : new apigateway.LogGroupLogDestination(logsOFApiGateway),
+         accessLogFormat : apigateway.AccessLogFormat.jsonWithStandardFields()
+      }
+    });
     apiGateway.root.addMethod('GET');
     apiGateway.root.addMethod('POST');
 
@@ -36,7 +43,6 @@ export class FirstAwsCdkAppStack extends cdk.Stack {
     });
 
     userResource.addMethod('GET' , new apigateway.LambdaIntegration(lambdaListUsers));
-    userResource.addMethod('PUT');
 
     tableUsers.grantReadData(lambdaListUsers);
     // example resource
