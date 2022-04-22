@@ -10,7 +10,7 @@ export class AwsCdkPipelineStack extends cdk.Stack {
 
     // The code that defines your stack goes here
 
-    const pipeline = new CodePipeline(this , 'Pipeline' ,{
+    new CodePipeline(this , 'Pipeline' ,{
       pipelineName: 'TestPipeline',
       synth: new ShellStep('synth' , {
         input: CodePipelineSource.gitHub('Raghuraj Singh Solanki/SMS','aws-pipeline'),
